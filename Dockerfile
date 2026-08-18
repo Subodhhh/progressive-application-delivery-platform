@@ -9,6 +9,9 @@ RUN pip install --no-cache-dir --user -r requirements.txt
 # --- Final stage ---
 FROM python:3.12-slim
 
+# Patch known OS-level CVEs with available fixes
+RUN apt-get update && apt-get upgrade -y && rm -rf /var/lib/apt/lists/*
+
 # Run as non-root
 RUN useradd --create-home --shell /bin/bash appuser
 
