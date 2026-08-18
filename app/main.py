@@ -7,7 +7,7 @@ app = FastAPI(title="ReleaseForge Demo App")
 
 # Version is injected via env var so we can build v1.0, v1.1, v1.2 etc.
 # without changing code every time.
-VERSION = os.getenv("APP_VERSION", "v1.0")
+VERSION = os.getenv("APP_VERSION", "v2.0")
 ENVIRONMENT = os.getenv("APP_ENV", "local")
 
 # Simple in-memory counter to prove request routing/traffic splitting works
