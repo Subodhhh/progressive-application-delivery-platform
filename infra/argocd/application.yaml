@@ -1,0 +1,23 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: releaseforge-dev
+  namespace: argocd
+spec:
+  project: default
+
+  source:
+    repoURL: https://github.com/Subodhhh/progressive-application-delivery-platform.git
+    targetRevision: main
+    path: infra/environments/dev
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: releaseforge
+
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
