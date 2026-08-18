@@ -1,53 +1,43 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
-
 metadata:
   name: releaseforge-app
   namespace: releaseforge
   labels:
     app: releaseforge-app
-
 spec:
   replicas: 2
-
   selector:
     matchLabels:
       app: releaseforge-app
-
   template:
     metadata:
       labels:
         app: releaseforge-app
-
     spec:
       containers:
         - name: releaseforge-app
-          image: subodhmore/releaseforge-app:08eebc33eb0a1b43f535c2a39808bc983b524cea
+          image: subodhmore/releaseforge-app:a039767838cb9a7ba23760e8a440a0f469f4b86b
           imagePullPolicy: Always
-            
           ports:
             - containerPort: 8000
-
           env:
             - name: APP_VERSION
               value: "v1.0"
             - name: APP_ENV
               value: "dev"
-
           readinessProbe:
             httpGet:
               path: /health
               port: 8000
             initialDelaySeconds: 3
             periodSeconds: 5
-
           livenessProbe:
             httpGet:
               path: /health
               port: 8000
             initialDelaySeconds: 5
             periodSeconds: 10
-
           resources:
             requests:
               cpu: 100m
@@ -55,7 +45,6 @@ spec:
             limits:
               cpu: 250m
               memory: 256Mi
-
   strategy:
     canary:
       steps:
