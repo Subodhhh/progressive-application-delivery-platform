@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: releaseforge-app
+  namespace: releaseforge
+  labels:
+    app: releaseforge-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: releaseforge-app
+  template:
+    metadata:
+      labels:
+        app: releaseforge-app
+    spec:
+      containers:
+        - name: releaseforge-app
+          image: subodhmore/releaseforge-app:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_VERSION
+              value: "v1.0"
+            - name: APP_ENV
+              value: "dev"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "250m"
+              memory: "256Mi"
