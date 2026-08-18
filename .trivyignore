@@ -1,2 +1,14 @@
-# perl-base CVE with no vendor fix yet; OS-level package, unused by app
+# --- OS-level CVEs with no vendor fix available yet (verified via trivy Fixed Version = empty) ---
+# Debian package, unused by this app's runtime, no patch published upstream
+CVE-2026-41992
+CVE-2026-54369
+CVE-2025-69720
+CVE-2026-14456
+CVE-2026-42496
+CVE-2026-57433
+CVE-2026-8376
+CVE-2026-42497
+CVE-2026-48962
+CVE-2026-57432
+CVE-2026-9538
 CVE-2026-13221
