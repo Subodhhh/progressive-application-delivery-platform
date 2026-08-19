@@ -23,7 +23,7 @@ spec:
             - containerPort: 8000
           env:
             - name: APP_ENV
-              value: "dev"
+              value: "dev-analysis-test"
           readinessProbe:
             httpGet:
               path: /health
@@ -45,11 +45,6 @@ spec:
               memory: 256Mi
   strategy:
     canary:
-      steps:
-        - setWeight: 50
-        - pause: {}
-        - set  strategy:
-    canary:
       stableService: releaseforge-app
       canaryService: releaseforge-app-canary
       trafficRouting:
@@ -57,9 +52,13 @@ spec:
           stableIngress: releaseforge-ingress
       steps:
         - setWeight: 10
-        - pause: {duration: 30}
-        - setWeight: 25
-        - pause: {duration: 30}
+        - pause: { duration: 20 }
+        - analysis:
+            templates:
+              - templateName: releaseforge-success-rate
+            args:
+              - name: service-name
+                value: releaseforge-app-canary
         - setWeight: 50
-        - pause: {duration: 30}
+        - pause: { duration: 20 }
         - setWeight: 100
