@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: releaseforge-app
-          image: subodhmore/releaseforge-app:6d0564af6e45c6c7dea80f58df286bce4a113307
+          image: subodhmore/releaseforge-app:24bf45c08f5640c988da35285693b8b3fc5a6254
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
@@ -52,7 +52,7 @@ spec:
           stableIngress: releaseforge-ingress
       steps:
         - setWeight: 10
-        - pause: { duration: 20 }
+        - pause: {duration: 20}
         - analysis:
             templates:
               - templateName: releaseforge-success-rate
@@ -60,5 +60,5 @@ spec:
               - name: service-name
                 value: releaseforge-app-canary
         - setWeight: 50
-        - pause: { duration: 20 }
+        - pause: {duration: 20}
         - setWeight: 100
