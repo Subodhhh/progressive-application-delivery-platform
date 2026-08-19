@@ -71,13 +71,13 @@ jobs:
         if: success()
         run: |
           sudo snap install yq 2>/dev/null || (curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq && chmod +x /usr/local/bin/yq)
-          yq eval '.spec.template.spec.containers[0].image = "${{ secrets.DOCKERHUB_USERNAME }}/releaseforge-app:${{ github.sha }}"' -i infra/environments/dev/deployment.yaml
+          yq eval '.spec.template.spec.containers[0].image = "${{ secrets.DOCKERHUB_USERNAME }}/releaseforge-app:${{ github.sha }}"' -i infra/environments/dev/rollout.yaml
 
       - name: Commit and push updated manifest
         if: success()
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add infra/environments/dev/deployment.yaml
+          git add infra/environments/dev/rollout.yaml
           git commit -m "ci: deploy image ${{ github.sha }} [skip ci]" || echo "No changes to commit"
           git push
