@@ -3,10 +3,13 @@ kind: Service
 metadata:
   name: releaseforge-app-canary
   namespace: releaseforge
+  labels:
+    app: releaseforge-app
 spec:
   selector:
     app: releaseforge-app
   ports:
-    - port: 80
+    - name: http
+      port: 80
       targetPort: 8000
   type: ClusterIP
