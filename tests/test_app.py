@@ -10,7 +10,7 @@ def test_root():
     body = response.json()
     assert "version" in body
     assert "hostname" in body
-    assert body["message"] == "ReleaseForge Demo Application"
+    assert body["message"] == "ReleaseForge Demo Application - Progressive Delivery v2"
 
 
 def test_version():
