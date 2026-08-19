@@ -23,7 +23,7 @@ spec:
             - containerPort: 8000
           env:
             - name: APP_ENV
-              value: "dev-canary-test"
+              value: "dev"
           readinessProbe:
             httpGet:
               path: /health
