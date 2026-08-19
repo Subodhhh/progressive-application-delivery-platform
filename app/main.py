@@ -63,7 +63,7 @@ def root():
     global request_count
     request_count += 1
     return {
-        "message": "ReleaseForge Demo Application",
+        "message": "ReleaseForge Demo Application - Progressive Delivery v2",
         "version": VERSION,
         "hostname": socket.gethostname(),
         "environment": ENVIRONMENT,
