@@ -6,6 +6,7 @@ metadata:
 spec:
   args:
     - name: service-name
+
   metrics:
     - name: error-rate
       interval: 30s
@@ -17,12 +18,27 @@ spec:
           address: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
           query: |
             (
-              sum(rate(http_requests_total{service="{{args.service-name}}", status_code=~"5.."}[2m]))
+              sum(
+                rate(
+                  http_requests_total{
+                    service="{{args.service-name}}",
+                    path="/payment",
+                    status_code=~"5.."
+                  }[2m]
+                )
+              )
               OR on() vector(0)
             )
             /
             (
-              sum(rate(http_requests_total{service="{{args.service-name}}"}[2m]))
+              sum(
+                rate(
+                  http_requests_total{
+                    service="{{args.service-name}}",
+                    path="/payment"
+                  }[2m]
+                )
+              )
               OR on() vector(1)
             )
 
@@ -35,6 +51,14 @@ spec:
         prometheus:
           address: http://monitoring-kube-prometheus-prometheus.monitoring.svc.cluster.local:9090
           query: |
-            histogram_quantile(0.95,
-              sum(rate(http_request_duration_seconds_bucket{service="{{args.service-name}}"}[2m])) by (le)
+            histogram_quantile(
+              0.95,
+              sum(
+                rate(
+                  http_request_duration_seconds_bucket{
+                    service="{{args.service-name}}",
+                    path="/payment"
+                  }[2m]
+                )
+              ) by (le)
             )
