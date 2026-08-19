@@ -2,8 +2,11 @@ import os
 import socket
 import time
 from fastapi import FastAPI, Response
+from prometheus_fastapi_instrumentator import Instrumentator
 
 app = FastAPI(title="ReleaseForge Demo App")
+
+Instrumentator().instrument(app).expose(app)
 
 # Version is injected via env var so we can build v1.0, v1.1, v1.2 etc.
 # without changing code every time.
