@@ -1,12 +1,50 @@
 import os
 import socket
 import time
-from fastapi import FastAPI, Response
-from prometheus_fastapi_instrumentator import Instrumentator
+from fastapi import FastAPI, Response, Request
+from prometheus_client import Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST
 
 app = FastAPI(title="ReleaseForge Demo App")
 
-Instrumentator().instrument(app).expose(app)
+# --- Manual Prometheus instrumentation ---
+# We instrument manually instead of using prometheus-fastapi-instrumentator
+# because that library hard-pins starlette<1.0.0, which conflicts with the
+# patched starlette version we need for known CVEs (see requirements.txt).
+
+REQUEST_COUNT = Counter(
+    "http_requests_total",
+    "Total HTTP requests",
+    ["method", "path", "status_code"],
+)
+
+REQUEST_LATENCY = Histogram(
+    "http_request_duration_seconds",
+    "HTTP request latency in seconds",
+    ["method", "path"],
+)
+
+
+@app.middleware("http")
+async def prometheus_middleware(request: Request, call_next):
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+
+    path = request.url.path
+    REQUEST_COUNT.labels(
+        method=request.method,
+        path=path,
+        status_code=response.status_code,
+    ).inc()
+    REQUEST_LATENCY.labels(method=request.method, path=path).observe(duration)
+
+    return response
+
+
+@app.get("/metrics")
+def metrics():
+    return Response(content=generate_latest(), media_type=CONTENT_TYPE_LATEST)
+
 
 # Version is injected via env var so we can build v1.0, v1.1, v1.2 etc.
 # without changing code every time.
