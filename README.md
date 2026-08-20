@@ -20,6 +20,8 @@ If the release fails the defined health criteria, the platform automatically abo
 * **Infrastructure as Code** — AWS infrastructure provisioned using Terraform
 * **Cloud-native deployment** — application deployed and verified on Amazon EKS
 
+---
+
 ## Architecture
 
 ```text
@@ -77,6 +79,8 @@ GitHub Actions
     Promote   Rollback
 ```
 
+---
+
 ## Progressive Delivery
 
 The platform uses Argo Rollouts to gradually introduce a new application version.
@@ -111,6 +115,18 @@ Stable    Canary
 
 Traffic is controlled at the HTTP level using NGINX Ingress weighted canary routing rather than relying on pod-count approximation.
 
+### Canary Failure Test
+
+A simulated application failure was introduced during a canary deployment to verify that the platform could detect unhealthy behavior through real HTTP responses.
+
+The test demonstrated successful responses followed by HTTP 500 errors and subsequent recovery:
+
+![Canary Failure Test](docs/screenshots/canary-failure-test.png)
+
+*Simulated canary failure producing HTTP 500 responses during progressive delivery testing.*
+
+---
+
 ## Automated Rollback
 
 During a canary deployment, application metrics are continuously evaluated using Prometheus and Argo Rollouts.
@@ -144,16 +160,15 @@ Automated Analysis
 Healthy  Failed
  │        │
  ▼        ▼
-Continue Rollout
-          │
-          ▼
-     Abort Rollout
-          │
-          ▼
-    Restore Stable
+Continue  Abort Rollout
+             │
+             ▼
+        Restore Stable
 ```
 
 A simulated production failure was used to verify the complete rollback mechanism. The Prometheus error-rate analysis failed, causing Argo Rollouts to automatically abort the rollout and return traffic to the stable version.
+
+---
 
 ## Observability
 
@@ -170,7 +185,15 @@ The Grafana dashboard contains:
 * **P95 Latency**
 * **Stable vs Canary Traffic**
 
-These panels provide visibility into application behavior during progressive deployments.
+### Progressive Delivery Monitoring Dashboard
+
+The dashboard provides a real-time view of application behavior and traffic distribution between the stable and canary versions.
+
+![Grafana Progressive Delivery Dashboard](docs/screenshots/grafana-progressive-delivery.png)
+
+*Grafana dashboard showing request rate, error rate, P95 latency, and stable-versus-canary traffic.*
+
+---
 
 ## CI/CD Pipeline
 
@@ -195,6 +218,8 @@ GitHub Actions
 
 The CI pipeline was also verified against real dependency vulnerabilities. HIGH/CRITICAL vulnerabilities were detected during development and required dependency updates before the release could proceed.
 
+---
+
 ## GitOps
 
 Git acts as the desired-state source for the Kubernetes environment.
@@ -213,6 +238,8 @@ Actual Cluster State
 ```
 
 GitOps drift correction was verified by manually changing the Kubernetes deployment state and observing Argo CD reconcile the cluster back to the state defined in Git.
+
+---
 
 ## Technology Stack
 
@@ -236,6 +263,8 @@ GitOps drift correction was verified by manually changing the Kubernetes deploym
 | Cloud                       | AWS               |
 | Managed Kubernetes          | Amazon EKS        |
 
+---
+
 ## AWS EKS Deployment
 
 The platform was deployed and verified on a real Amazon EKS cluster provisioned using Terraform.
@@ -253,7 +282,15 @@ AWS
                  └── Canary
 ```
 
-Cluster verification was performed using:
+### Terraform Provisioning and EKS Verification
+
+The infrastructure was provisioned using Terraform and verified using the AWS CLI and `kubectl`.
+
+![AWS EKS Deployment](docs/screenshots/aws-eks-deployment.png)
+
+*Terraform successfully provisioned the EKS infrastructure and the worker nodes were verified as Ready.*
+
+Cluster verification:
 
 ```bash
 aws eks update-kubeconfig \
@@ -264,6 +301,8 @@ kubectl get nodes -o wide
 ```
 
 The EKS cluster successfully reported ready worker nodes and the application was verified running on the provisioned infrastructure.
+
+---
 
 ## Infrastructure as Code
 
@@ -284,6 +323,8 @@ terraform destroy
 ```
 
 The infrastructure was destroyed after testing to avoid unnecessary AWS costs.
+
+---
 
 ## Local Development
 
@@ -324,6 +365,8 @@ docker build -t releaseforge-app:local .
 ```bash
 docker run -p 8000:8000 releaseforge-app:local
 ```
+
+---
 
 ## Local Kubernetes Deployment
 
@@ -379,6 +422,8 @@ Deploy the Argo CD application:
 kubectl apply -f infra/argocd/application.yaml
 ```
 
+---
+
 ## Repository Structure
 
 ```text
@@ -413,10 +458,18 @@ progressive-application-delivery-platform/
 │   └── workflows/
 │       └── ci.yml
 │
+├── docs/
+│   └── screenshots/
+│       ├── grafana-progressive-delivery.png
+│       ├── canary-failure-test.png
+│       └── aws-eks-deployment.png
+│
 ├── Dockerfile
 ├── requirements.txt
 └── README.md
 ```
+
+---
 
 ## Verification
 
@@ -437,6 +490,8 @@ The major platform capabilities were executed and verified:
 | AWS deployment     | Application deployed on real EKS infrastructure |
 | Terraform          | EKS infrastructure provisioned through IaC      |
 
+---
+
 ## Key Engineering Concepts
 
 This project demonstrates practical implementation of:
@@ -455,6 +510,8 @@ This project demonstrates practical implementation of:
 * Automated rollback
 * Infrastructure as Code
 * AWS EKS
+
+---
 
 ## Project Outcome
 
