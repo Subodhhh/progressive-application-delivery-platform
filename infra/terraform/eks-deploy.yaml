@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: releaseforge-app
+  namespace: releaseforge
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: releaseforge-app
+  template:
+    metadata:
+      labels:
+        app: releaseforge-app
+    spec:
+      containers:
+        - name: releaseforge-app
+          image: subodhmore/releaseforge-app:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: APP_VERSION
+              value: "v2.0"
+            - name: APP_ENV
+              value: "aws-eks-demo"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: releaseforge-app
+  namespace: releaseforge
+spec:
+  selector:
+    app: releaseforge-app
+  ports:
+    - port: 80
+      targetPort: 8000
+  type: ClusterIP
