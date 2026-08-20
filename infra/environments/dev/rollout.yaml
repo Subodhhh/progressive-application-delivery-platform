@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: releaseforge-app
-          image: subodhmore/releaseforge-app:3bfcba11e59f76494d7e7f4e3252d2629e358739
+          image: subodhmore/releaseforge-app:b0171289f4b1209c79501ee2ca29e0ad34807190
           imagePullPolicy: Always
           ports:
             - containerPort: 8000
